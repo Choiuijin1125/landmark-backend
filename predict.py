@@ -1,18 +1,21 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_bootstrap import Bootstrap
-
+from flask_cors import CORS, cross_origin
 import os
 import model
+
 
 app = Flask(__name__, template_folder='Template')
 cors = CORS(app)
 Bootstrap(app)
 
-"""
-Routes
-"""
-@app.route('/', methods=['GET','POST'])
-def index():
+@app.route('/upload')
+def render_file():
+    return render_template('upload.html')
+
+@app.route('/fileUpload', methods = ['GET', 'POST'])
+@cross_origin()
+def upload_file():
     if request.method == 'POST':
         uploaded_file = request.files['file']
         if uploaded_file.filename != '':
@@ -23,13 +26,8 @@ def index():
                 'class_name': class_name,
                 'image_path': image_path,
             }
-            return render_template('result.html', result = result)
-    return render_template('index.html')
+            return result
 
-@app.route('/predict', methods=['GET','POST'])
-def hello_world():
-    return "Hello, World!"
-    
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True)        
